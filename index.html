@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>امتحان HTML الشامل</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --surface: #141728;
+    --surface2: #1c2035;
+    --border: #2a2f4a;
+    --accent: #4f8ef7;
+    --accent2: #7c3aed;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e8eaf6;
+    --muted: #7b82a0;
+    --code-bg: #0a0c14;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── GRID BACKGROUND ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,142,247,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,142,247,.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(180deg, #0a0c17 0%, transparent 100%);
+  }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 24px;
+    text-align: center;
+    min-width: 110px;
+  }
+
+  .stat-num {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: .75rem;
+    color: var(--muted);
+  }
+
+  /* ─── PROGRESS ─── */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,15,26,.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 3px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+
+  .progress-text {
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ─── MAIN ─── */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 20px 60px;
+  }
+
+  /* ─── SECTION HEADER ─── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 40px 0 20px;
+  }
+
+  .section-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .icon-mc  { background: linear-gradient(135deg,#4f8ef7,#7c3aed); }
+  .icon-tf  { background: linear-gradient(135deg,#22c55e,#15803d); }
+  .icon-fill{ background: linear-gradient(135deg,#f59e0b,#d97706); }
+  .icon-code{ background: linear-gradient(135deg,#ef4444,#991b1b); }
+  .icon-exp { background: linear-gradient(135deg,#a855f7,#7c3aed); }
+
+  .section-title-wrap h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .section-title-wrap p {
+    font-size: .8rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ─── QUESTION CARD ─── */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 14px;
+    transition: border-color .2s;
+    animation: fadeUp .4s ease both;
+  }
+
+  .q-card:hover { border-color: #3a4060; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .q-num {
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: .95rem;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    color: #d0d4ef;
+  }
+
+  code {
+    font-family: 'Fira Code', monospace;
+    background: var(--code-bg);
+    color: #7dd3fc;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: .85em;
+    border: 1px solid #1e2540;
+  }
+
+  /* ─── MC OPTIONS ─── */
+  .options {
+    display: grid;
+    gap: 8px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 16px;
+    cursor: pointer;
+    transition: all .18s;
+    user-select: none;
+    font-size: .9rem;
+  }
+
+  .option:hover {
+    border-color: var(--accent);
+    background: rgba(79,142,247,.07);
+  }
+
+  .option input[type=radio],
+  .option input[type=checkbox] {
+    width: 16px; height: 16px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .option.correct {
+    border-color: var(--green);
+    background: rgba(34,197,94,.1);
+  }
+
+  .option.wrong {
+    border-color: var(--red);
+    background: rgba(239,68,68,.1);
+  }
+
+  /* ─── TRUE/FALSE ─── */
+  .tf-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .tf-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s;
+  }
+
+  .tf-btn:hover { border-color: var(--accent); background: rgba(79,142,247,.07); }
+  .tf-btn.selected-true  { border-color: var(--green); background: rgba(34,197,94,.12); color: var(--green); }
+  .tf-btn.selected-false { border-color: var(--red);   background: rgba(239,68,68,.12); color: var(--red);   }
+  .tf-btn.correct { border-color: var(--green); background: rgba(34,197,94,.15); }
+  .tf-btn.wrong   { border-color: var(--red);   background: rgba(239,68,68,.15); }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid #1e2540;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 12px 0;
+    font-family: 'Fira Code', monospace;
+    font-size: .82rem;
+    line-height: 1.8;
+    direction: ltr;
+    text-align: left;
+    overflow-x: auto;
+    color: #94a3b8;
+  }
+
+  .code-block .kw  { color: #c084fc; }
+  .code-block .tag { color: #60a5fa; }
+  .code-block .str { color: #34d399; }
+  .code-block .gap {
+    display: inline-block;
+    min-width: 80px;
+    border-bottom: 2px solid var(--accent);
+    margin: 0 4px;
+    vertical-align: middle;
+  }
+
+  /* ─── TEXT INPUT ─── */
+  textarea, .fill-input {
+    width: 100%;
+    background: var(--code-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'Fira Code', monospace;
+    font-size: .85rem;
+    line-height: 1.7;
+    resize: vertical;
+    transition: border-color .2s;
+    direction: ltr;
+    text-align: left;
+  }
+
+  textarea:focus, .fill-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .short-input {
+    display: inline-block;
+    background: var(--code-bg);
+    border: none;
+    border-bottom: 2px solid var(--accent);
+    color: #7dd3fc;
+    font-family: 'Fira Code', monospace;
+    font-size: .85rem;
+    padding: 2px 6px;
+    width: 90px;
+    text-align: center;
+    outline: none;
+    vertical-align: middle;
+    direction: ltr;
+  }
+
+  /* ─── FEEDBACK ─── */
+  .feedback {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+  }
+
+  .feedback.correct { display: block; background: rgba(34,197,94,.12); border: 1px solid var(--green); color: var(--green); }
+  .feedback.wrong   { display: block; background: rgba(239,68,68,.12);  border: 1px solid var(--red);   color: var(--red);   }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Cairo', sans-serif;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .18s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(79,142,247,.3);
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(79,142,247,.4); }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-green {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: #fff;
+  }
+
+  /* ─── SUBMIT AREA ─── */
+  .submit-area {
+    margin-top: 40px;
+    text-align: center;
+    padding: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+
+  .submit-area h3 { font-size: 1.3rem; margin-bottom: 8px; }
+  .submit-area p  { color: var(--muted); margin-bottom: 24px; font-size: .9rem; }
+
+  /* ─── RESULT MODAL ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.8);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    animation: modalIn .3s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity:0; transform:scale(.9); }
+    to   { opacity:1; transform:scale(1); }
+  }
+
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid var(--accent);
+    background: rgba(79,142,247,.1);
+  }
+
+  .score-big { font-size: 2.4rem; font-weight: 900; color: var(--accent); }
+  .score-max { font-size: .85rem; color: var(--muted); }
+  .modal h2  { font-size: 1.5rem; margin-bottom: 8px; }
+  .modal p   { color: var(--muted); margin-bottom: 24px; }
+
+  .result-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+    text-align: right;
+  }
+
+  .rb-item {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+  }
+
+  .rb-label { font-size: .75rem; color: var(--muted); margin-bottom: 4px; }
+  .rb-val   { font-size: 1.1rem; font-weight: 700; }
+
+  .modal-btns { display: flex; gap: 10px; justify-content: center; }
+
+  /* ─── Q-CARD STATUS ─── */
+  .q-card.answered { border-right: 3px solid var(--accent); }
+  .q-card.q-correct { border-right: 3px solid var(--green); }
+  .q-card.q-wrong   { border-right: 3px solid var(--red); }
+
+  .q-status {
+    float: left;
+    font-size: .75rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+  }
+
+  .status-correct { background: rgba(34,197,94,.15); color: var(--green); }
+  .status-wrong   { background: rgba(239,68,68,.15);  color: var(--red); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .stats-bar { gap: 10px; }
+    .stat { padding: 10px 16px; }
+    .q-card { padding: 18px 16px; }
+    .result-breakdown { grid-template-columns: 1fr; }
+    .modal { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="badge">📘 HTML — المستوى الأساسي</div>
+  <h1>امتحان HTML الشامل</h1>
+  <p class="subtitle">Introduction · Elements · Attributes · Headings · Paragraphs · Images · Formatting · Quotations · Comments</p>
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-num">35</span><span class="stat-label">سؤال كلي</span></div>
+    <div class="stat"><span class="stat-num" id="answeredCount">0</span><span class="stat-label">تمّت الإجابة</span></div>
+    <div class="stat"><span class="stat-num" id="remainCount">35</span><span class="stat-label">متبقي</span></div>
+    <div class="stat"><span class="stat-num">5</span><span class="stat-label">أجزاء</span></div>
+  </div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <span style="font-size:.8rem;color:var(--muted)">التقدم</span>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="progress-text" id="progressText">0 / 35</span>
+</div>
+
+<main>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- PART 1: MCQ -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon icon-mc">🔤</div>
+    <div class="section-title-wrap">
+      <h2>الجزء الأول: اختيار من متعدد</h2>
+      <p>20 سؤال — اختر الإجابة الصحيحة</p>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-card" id="qcard-mc1">
+    <div class="q-num">سؤال 1 / 20</div>
+    <div class="q-text">ما هي الوسوم التي تُحيط بمحتوى صفحة HTML بالكامل؟</div>
+    <div class="options" id="mc1">
+      <label class="option"><input type="radio" name="mc1" value="a"> أ) <code>&lt;body&gt;</code></label>
+      <label class="option"><input type="radio" name="mc1" value="b"> ب) <code>&lt;html&gt;</code></label>
+      <label class="option"><input type="radio" name="mc1" value="c"> ج) <code>&lt;head&gt;</code></label>
+      <label class="option"><input type="radio" name="mc1" value="d"> د) <code>&lt;document&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="qcard-mc2">
+    <div class="q-num">سؤال 2 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لتحديد العنوان الذي يظهر في شريط المتصفح؟</div>
+    <div class="options" id="mc2">
+      <label class="option"><input type="radio" name="mc2" value="a"> أ) <code>&lt;header&gt;</code></label>
+      <label class="option"><input type="radio" name="mc2" value="b"> ب) <code>&lt;h1&gt;</code></label>
+      <label class="option"><input type="radio" name="mc2" value="c"> ج) <code>&lt;title&gt;</code></label>
+      <label class="option"><input type="radio" name="mc2" value="d"> د) <code>&lt;name&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="qcard-mc3">
+    <div class="q-num">سؤال 3 / 20</div>
+    <div class="q-text">ما هي السمة (Attribute) في HTML؟</div>
+    <div class="options" id="mc3">
+      <label class="option"><input type="radio" name="mc3" value="a"> أ) محتوى النص داخل الوسم</label>
+      <label class="option"><input type="radio" name="mc3" value="b"> ب) معلومات إضافية تُضاف للوسم</label>
+      <label class="option"><input type="radio" name="mc3" value="c"> ج) نوع الخط المستخدم</label>
+      <label class="option"><input type="radio" name="mc3" value="d"> د) لون الخلفية فقط</label>
+    </div>
+    <div class="feedback" id="fb-mc3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="qcard-mc4">
+    <div class="q-num">سؤال 4 / 20</div>
+    <div class="q-text">أي من التالي يُعتبر وسم HTML صحيحاً؟</div>
+    <div class="options" id="mc4">
+      <label class="option"><input type="radio" name="mc4" value="a"> أ) <code>&lt;P&gt;</code></label>
+      <label class="option"><input type="radio" name="mc4" value="b"> ب) <code>&lt;p&gt;</code></label>
+      <label class="option"><input type="radio" name="mc4" value="c"> ج) كلاهما صحيح</label>
+      <label class="option"><input type="radio" name="mc4" value="d"> د) <code>&lt;paragraph&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc4"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="qcard-mc5">
+    <div class="q-num">سؤال 5 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لإنشاء عنوان فرعي من المستوى الثالث؟</div>
+    <div class="options" id="mc5">
+      <label class="option"><input type="radio" name="mc5" value="a"> أ) <code>&lt;h1&gt;</code></label>
+      <label class="option"><input type="radio" name="mc5" value="b"> ب) <code>&lt;h3&gt;</code></label>
+      <label class="option"><input type="radio" name="mc5" value="c"> ج) <code>&lt;head3&gt;</code></label>
+      <label class="option"><input type="radio" name="mc5" value="d"> د) <code>&lt;title3&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc5"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="qcard-mc6">
+    <div class="q-num">سؤال 6 / 20</div>
+    <div class="q-text">كم عدد مستويات العناوين (Headings) المتاحة في HTML؟</div>
+    <div class="options" id="mc6">
+      <label class="option"><input type="radio" name="mc6" value="a"> أ) 4 مستويات</label>
+      <label class="option"><input type="radio" name="mc6" value="b"> ب) 5 مستويات</label>
+      <label class="option"><input type="radio" name="mc6" value="c"> ج) 6 مستويات</label>
+      <label class="option"><input type="radio" name="mc6" value="d"> د) 7 مستويات</label>
+    </div>
+    <div class="feedback" id="fb-mc6"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-card" id="qcard-mc7">
+    <div class="q-num">سؤال 7 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لإنشاء فقرة نصية؟</div>
+    <div class="options" id="mc7">
+      <label class="option"><input type="radio" name="mc7" value="a"> أ) <code>&lt;text&gt;</code></label>
+      <label class="option"><input type="radio" name="mc7" value="b"> ب) <code>&lt;para&gt;</code></label>
+      <label class="option"><input type="radio" name="mc7" value="c"> ج) <code>&lt;p&gt;</code></label>
+      <label class="option"><input type="radio" name="mc7" value="d"> د) <code>&lt;paragraph&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc7"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-card" id="qcard-mc8">
+    <div class="q-num">سؤال 8 / 20</div>
+    <div class="q-text">ما هي السمة الصحيحة لتحديد مصدر الصورة؟</div>
+    <div class="options" id="mc8">
+      <label class="option"><input type="radio" name="mc8" value="a"> أ) <code>href</code></label>
+      <label class="option"><input type="radio" name="mc8" value="b"> ب) <code>link</code></label>
+      <label class="option"><input type="radio" name="mc8" value="c"> ج) <code>src</code></label>
+      <label class="option"><input type="radio" name="mc8" value="d"> د) <code>source</code></label>
+    </div>
+    <div class="feedback" id="fb-mc8"></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card" id="qcard-mc9">
+    <div class="q-num">سؤال 9 / 20</div>
+    <div class="q-text">ما الغرض من سمة <code>alt</code> في وسم <code>&lt;img&gt;</code>؟</div>
+    <div class="options" id="mc9">
+      <label class="option"><input type="radio" name="mc9" value="a"> أ) لتحديد حجم الصورة</label>
+      <label class="option"><input type="radio" name="mc9" value="b"> ب) لتوفير نص بديل يظهر إذا لم تُحمَّل الصورة</label>
+      <label class="option"><input type="radio" name="mc9" value="c"> ج) لتحديد عنوان الصورة</label>
+      <label class="option"><input type="radio" name="mc9" value="d"> د) لتحديد لون خلفية الصورة</label>
+    </div>
+    <div class="feedback" id="fb-mc9"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="qcard-mc10">
+    <div class="q-num">سؤال 10 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لجعل النص غامقاً (Bold)؟</div>
+    <div class="options" id="mc10">
+      <label class="option"><input type="radio" name="mc10" value="a"> أ) <code>&lt;b&gt;</code></label>
+      <label class="option"><input type="radio" name="mc10" value="b"> ب) <code>&lt;strong&gt;</code></label>
+      <label class="option"><input type="radio" name="mc10" value="c"> ج) كلاهما</label>
+      <label class="option"><input type="radio" name="mc10" value="d"> د) <code>&lt;bold&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc10"></div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="q-card" id="qcard-mc11">
+    <div class="q-num">سؤال 11 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لجعل النص مائلاً (Italic)؟</div>
+    <div class="options" id="mc11">
+      <label class="option"><input type="radio" name="mc11" value="a"> أ) <code>&lt;i&gt;</code></label>
+      <label class="option"><input type="radio" name="mc11" value="b"> ب) <code>&lt;em&gt;</code></label>
+      <label class="option"><input type="radio" name="mc11" value="c"> ج) كلاهما</label>
+      <label class="option"><input type="radio" name="mc11" value="d"> د) <code>&lt;italic&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc11"></div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-card" id="qcard-mc12">
+    <div class="q-num">سؤال 12 / 20</div>
+    <div class="q-text">ما الفرق بين <code>&lt;b&gt;</code> و <code>&lt;strong&gt;</code>؟</div>
+    <div class="options" id="mc12">
+      <label class="option"><input type="radio" name="mc12" value="a"> أ) لا يوجد فرق في المظهر</label>
+      <label class="option"><input type="radio" name="mc12" value="b"> ب) <code>&lt;strong&gt;</code> يحمل دلالة معنوية (أهمية) بينما <code>&lt;b&gt;</code> مجرد تنسيق</label>
+      <label class="option"><input type="radio" name="mc12" value="c"> ج) <code>&lt;b&gt;</code> أحدث من <code>&lt;strong&gt;</code></label>
+      <label class="option"><input type="radio" name="mc12" value="d"> د) <code>&lt;strong&gt;</code> لا يعمل في المتصفحات القديمة</label>
+    </div>
+    <div class="feedback" id="fb-mc12"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="q-card" id="qcard-mc13">
+    <div class="q-num">سؤال 13 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لإنشاء نص مشطوب (Strikethrough)؟</div>
+    <div class="options" id="mc13">
+      <label class="option"><input type="radio" name="mc13" value="a"> أ) <code>&lt;strike&gt;</code></label>
+      <label class="option"><input type="radio" name="mc13" value="b"> ب) <code>&lt;s&gt;</code></label>
+      <label class="option"><input type="radio" name="mc13" value="c"> ج) <code>&lt;del&gt;</code></label>
+      <label class="option"><input type="radio" name="mc13" value="d"> د) كل ما سبق</label>
+    </div>
+    <div class="feedback" id="fb-mc13"></div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="q-card" id="qcard-mc14">
+    <div class="q-num">سؤال 14 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لإنشاء نص مرتفع (Superscript)؟</div>
+    <div class="options" id="mc14">
+      <label class="option"><input type="radio" name="mc14" value="a"> أ) <code>&lt;sup&gt;</code></label>
+      <label class="option"><input type="radio" name="mc14" value="b"> ب) <code>&lt;sub&gt;</code></label>
+      <label class="option"><input type="radio" name="mc14" value="c"> ج) <code>&lt;up&gt;</code></label>
+      <label class="option"><input type="radio" name="mc14" value="d"> د) <code>&lt;top&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc14"></div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="q-card" id="qcard-mc15">
+    <div class="q-num">سؤال 15 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لإنشاء نص منخفض (Subscript)؟</div>
+    <div class="options" id="mc15">
+      <label class="option"><input type="radio" name="mc15" value="a"> أ) <code>&lt;sup&gt;</code></label>
+      <label class="option"><input type="radio" name="mc15" value="b"> ب) <code>&lt;sub&gt;</code></label>
+      <label class="option"><input type="radio" name="mc15" value="c"> ج) <code>&lt;down&gt;</code></label>
+      <label class="option"><input type="radio" name="mc15" value="d"> د) <code>&lt;low&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc15"></div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="q-card" id="qcard-mc16">
+    <div class="q-num">سؤال 16 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لاقتباس طويل من مصدر خارجي؟</div>
+    <div class="options" id="mc16">
+      <label class="option"><input type="radio" name="mc16" value="a"> أ) <code>&lt;q&gt;</code></label>
+      <label class="option"><input type="radio" name="mc16" value="b"> ب) <code>&lt;quote&gt;</code></label>
+      <label class="option"><input type="radio" name="mc16" value="c"> ج) <code>&lt;blockquote&gt;</code></label>
+      <label class="option"><input type="radio" name="mc16" value="d"> د) <code>&lt;cite&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc16"></div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="q-card" id="qcard-mc17">
+    <div class="q-num">سؤال 17 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لاقتباس قصير داخل سطر النص؟</div>
+    <div class="options" id="mc17">
+      <label class="option"><input type="radio" name="mc17" value="a"> أ) <code>&lt;q&gt;</code></label>
+      <label class="option"><input type="radio" name="mc17" value="b"> ب) <code>&lt;blockquote&gt;</code></label>
+      <label class="option"><input type="radio" name="mc17" value="c"> ج) <code>&lt;quote&gt;</code></label>
+      <label class="option"><input type="radio" name="mc17" value="d"> د) <code>&lt;short&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc17"></div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="q-card" id="qcard-mc18">
+    <div class="q-num">سؤال 18 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لذكر اسم العمل (كتاب، مقالة، فيلم)؟</div>
+    <div class="options" id="mc18">
+      <label class="option"><input type="radio" name="mc18" value="a"> أ) <code>&lt;title&gt;</code></label>
+      <label class="option"><input type="radio" name="mc18" value="b"> ب) <code>&lt;cite&gt;</code></label>
+      <label class="option"><input type="radio" name="mc18" value="c"> ج) <code>&lt;name&gt;</code></label>
+      <label class="option"><input type="radio" name="mc18" value="d"> د) <code>&lt;work&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc18"></div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="q-card" id="qcard-mc19">
+    <div class="q-num">سؤال 19 / 20</div>
+    <div class="q-text">كيف تكتب تعليقاً (Comment) في HTML؟</div>
+    <div class="options" id="mc19">
+      <label class="option"><input type="radio" name="mc19" value="a"> أ) <code>// هذا تعليق</code></label>
+      <label class="option"><input type="radio" name="mc19" value="b"> ب) <code>/* هذا تعليق */</code></label>
+      <label class="option"><input type="radio" name="mc19" value="c"> ج) <code>&lt;!-- هذا تعليق --&gt;</code></label>
+      <label class="option"><input type="radio" name="mc19" value="d"> د) <code># هذا تعليق</code></label>
+    </div>
+    <div class="feedback" id="fb-mc19"></div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="q-card" id="qcard-mc20">
+    <div class="q-num">سؤال 20 / 20</div>
+    <div class="q-text">أي وسم يُستخدم لإنشاء خط أفقي فاصل؟</div>
+    <div class="options" id="mc20">
+      <label class="option"><input type="radio" name="mc20" value="a"> أ) <code>&lt;line&gt;</code></label>
+      <label class="option"><input type="radio" name="mc20" value="b"> ب) <code>&lt;br&gt;</code></label>
+      <label class="option"><input type="radio" name="mc20" value="c"> ج) <code>&lt;hr&gt;</code></label>
+      <label class="option"><input type="radio" name="mc20" value="d"> د) <code>&lt;break&gt;</code></label>
+    </div>
+    <div class="feedback" id="fb-mc20"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- PART 2: TRUE / FALSE -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon icon-tf">✓</div>
+    <div class="section-title-wrap">
+      <h2>الجزء الثاني: صح أو خطأ</h2>
+      <p>10 أسئلة — حدد صح أو خطأ</p>
+    </div>
+  </div>
+
+  <div id="tf-questions"></div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- PART 3: FILL IN CODE -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon icon-fill">{ }</div>
+    <div class="section-title-wrap">
+      <h2>الجزء الثالث: أكمل الكود</h2>
+      <p>5 أسئلة — اكتب الكلمات المفقودة</p>
+    </div>
+  </div>
+
+  <!-- Fill Q1 -->
+  <div class="q-card" id="qcard-fill1">
+    <div class="q-num">سؤال 1 / 5 — الهيكل الأساسي</div>
+    <div class="q-text">أكمل الهيكل الأساسي لصفحة HTML بكتابة الوسوم الناقصة في الحقول:</div>
+    <div class="code-block" dir="ltr">
+      &lt;!DOCTYPE html&gt;<br>
+      &lt;<input class="short-input" id="f1-1" placeholder="..."> lang="ar"&gt;<br>
+      &nbsp;&nbsp;&lt;<input class="short-input" id="f1-2" placeholder="...">&gt;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&lt;meta charset="UTF-8"&gt;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&lt;<input class="short-input" id="f1-3" placeholder="...">صفحتي الأولى&lt;/<input class="short-input" id="f1-4" placeholder="...">&gt;<br>
+      &nbsp;&nbsp;&lt;/<input class="short-input" id="f1-5" placeholder="...">&gt;<br>
+      &nbsp;&nbsp;&lt;<input class="short-input" id="f1-6" placeholder="...">&gt;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- المحتوى هنا --&gt;<br>
+      &nbsp;&nbsp;&lt;/<input class="short-input" id="f1-7" placeholder="...">&gt;<br>
+      &lt;/<input class="short-input" id="f1-8" placeholder="...">&gt;
+    </div>
+    <div style="margin-top:10px;font-size:.8rem;color:var(--muted)">الحقول بالترتيب: html — head — title — title — head — body — body — html</div>
+  </div>
+
+  <!-- Fill Q2 -->
+  <div class="q-card" id="qcard-fill2">
+    <div class="q-num">سؤال 2 / 5 — عنوان وفقرة</div>
+    <div class="q-text">أكمل الكود لإنشاء عنوان رئيسي وفقرة:</div>
+    <div class="code-block" dir="ltr">
+      &lt;<input class="short-input" id="f2-1" placeholder="...">مرحباً بكم في موقعي&lt;/<input class="short-input" id="f2-2" placeholder="...">&gt;<br>
+      &lt;<input class="short-input" id="f2-3" placeholder="...">هذا هو المحتوى الرئيسي للصفحة.&lt;/<input class="short-input" id="f2-4" placeholder="...">&gt;
+    </div>
+    <div style="margin-top:10px;font-size:.8rem;color:var(--muted)">الإجابة: h1 — h1 — p — p</div>
+  </div>
+
+  <!-- Fill Q3 -->
+  <div class="q-card" id="qcard-fill3">
+    <div class="q-num">سؤال 3 / 5 — إدراج صورة</div>
+    <div class="q-text">أكمل الكود لإدراج صورة مع نص بديل:</div>
+    <div class="code-block" dir="ltr">
+      &lt;<input class="short-input" id="f3-1" placeholder="..."> src="images/photo.jpg" <input class="short-input" id="f3-2" placeholder="...">="صورة توضيحية" width="300" <input class="short-input" id="f3-3" placeholder="...">="200"&gt;
+    </div>
+    <div style="margin-top:10px;font-size:.8rem;color:var(--muted)">الإجابة: img — alt — height</div>
+  </div>
+
+  <!-- Fill Q4 -->
+  <div class="q-card" id="qcard-fill4">
+    <div class="q-num">سؤال 4 / 5 — تنسيق النص</div>
+    <div class="q-text">أكمل الكود لتنسيق النص:</div>
+    <div class="code-block" dir="ltr">
+      &lt;<input class="short-input" id="f4-1" placeholder="...">هذا نص غامق&lt;/<input class="short-input" id="f4-2" placeholder="...">&gt;<br>
+      &lt;<input class="short-input" id="f4-3" placeholder="...">هذا نص مائل&lt;/<input class="short-input" id="f4-4" placeholder="...">&gt;<br>
+      &lt;<input class="short-input" id="f4-5" placeholder="...">هذا نص مشطوب&lt;/<input class="short-input" id="f4-6" placeholder="...">&gt;<br>
+      &lt;<input class="short-input" id="f4-7" placeholder="...">هذا نص مُميز&lt;/<input class="short-input" id="f4-8" placeholder="...">&gt;
+    </div>
+    <div style="margin-top:10px;font-size:.8rem;color:var(--muted)">الإجابة: b/strong — i/em — s/del — mark</div>
+  </div>
+
+  <!-- Fill Q5 -->
+  <div class="q-card" id="qcard-fill5">
+    <div class="q-num">سؤال 5 / 5 — اقتباس وعنوان العمل</div>
+    <div class="q-text">أكمل الكود للاقتباس وعنوان العمل:</div>
+    <div class="code-block" dir="ltr">
+      &lt;<input class="short-input" id="f5-1" placeholder="..."> cite="https://example.com"&gt;<br>
+      &nbsp;&nbsp;هذا اقتباس طويل من مصدر موثوق.<br>
+      &lt;/<input class="short-input" id="f5-2" placeholder="...">&gt;<br><br>
+      &lt;p&gt;كما قال الشاعر: &lt;<input class="short-input" id="f5-3" placeholder="...">العلم نور&lt;/<input class="short-input" id="f5-4" placeholder="...">&gt;&lt;/p&gt;<br><br>
+      &lt;p&gt;اقرأ كتاب &lt;<input class="short-input" id="f5-5" placeholder="...">HTML للمبتدئين&lt;/<input class="short-input" id="f5-6" placeholder="...">&gt;&lt;/p&gt;
+    </div>
+    <div style="margin-top:10px;font-size:.8rem;color:var(--muted)">الإجابة: blockquote — blockquote — q — q — cite — cite</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- PART 4: WRITE CODE -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon icon-code">💻</div>
+    <div class="section-title-wrap">
+      <h2>الجزء الرابع: اكتب الكود</h2>
+      <p>3 أسئلة — اكتب كود HTML كامل</p>
+    </div>
+  </div>
+
+  <!-- Code Q1 -->
+  <div class="q-card" id="qcard-code1">
+    <div class="q-num">سؤال 1 / 3</div>
+    <div class="q-text">اكتب كود HTML كامل يحتوي على: هيكل HTML5 الأساسي، عنوان الصفحة "مدونتي الشخصية"، عنوان رئيسي <code>&lt;h1&gt;</code> "مرحباً بكم"، عنوان فرعي <code>&lt;h2&gt;</code> "من أنا"، فقرة <code>&lt;p&gt;</code> تتحدث عن نفسك، تعليق يوضح "هذا القسم الشخصي"، وخط أفقي <code>&lt;hr&gt;</code>.</div>
+    <textarea id="code1" rows="14" placeholder="اكتب الكود هنا..."></textarea>
+  </div>
+
+  <!-- Code Q2 -->
+  <div class="q-card" id="qcard-code2">
+    <div class="q-num">سؤال 2 / 3</div>
+    <div class="q-text">اكتب كود HTML يحتوي على: صورة من <code>logo.png</code> بحجم 150×150 مع نص بديل، عنوان <code>&lt;h3&gt;</code> "خدماتنا"، ثلاث فقرات خدمات (كلمة "تصميم" غامقة + "احترافي" مائلة، كلمة "برمجة" مُميزة بـ <code>&lt;mark&gt;</code>، اقتباس قصير "الجودة أولاً" بـ <code>&lt;q&gt;</code>).</div>
+    <textarea id="code2" rows="14" placeholder="اكتب الكود هنا..."></textarea>
+  </div>
+
+  <!-- Code Q3 -->
+  <div class="q-card" id="qcard-code3">
+    <div class="q-num">سؤال 3 / 3</div>
+    <div class="q-text">اكتب كود HTML يحتوي على: عنوان <code>&lt;h2&gt;</code> "معلومات التواصل"، معلومات الاتصال داخل <code>&lt;address&gt;</code>، رقم هاتف مشطوب بـ <code>&lt;del&gt;</code> وبديله بـ <code>&lt;ins&gt;</code>، اختصار "HTML" باستخدام <code>&lt;abbr&gt;</code>، نص بـ <code>&lt;bdo dir="rtl"&gt;</code>، وتعليق "نهاية الصفحة".</div>
+    <textarea id="code3" rows="14" placeholder="اكتب الكود هنا..."></textarea>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- PART 5: EXPLANATION -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-icon icon-exp">📝</div>
+    <div class="section-title-wrap">
+      <h2>الجزء الخامس: شرح ومقارنة</h2>
+      <p>2 سؤال — أجب بأسلوبك</p>
+    </div>
+  </div>
+
+  <!-- Explain Q1 -->
+  <div class="q-card" id="qcard-exp1">
+    <div class="q-num">سؤال 1 / 2</div>
+    <div class="q-text">اشرح الفرق بين: <code>&lt;b&gt;</code> و <code>&lt;strong&gt;</code>، و <code>&lt;i&gt;</code> و <code>&lt;em&gt;</code>. متى تُفضل استخدام كل منها؟</div>
+    <textarea id="exp1" rows="6" placeholder="اكتب إجابتك هنا..." style="font-family:'Cairo',sans-serif; direction:rtl; text-align:right;"></textarea>
+  </div>
+
+  <!-- Explain Q2 -->
+  <div class="q-card" id="qcard-exp2">
+    <div class="q-num">سؤال 2 / 2</div>
+    <div class="q-text">اشرح الفرق بين: <code>&lt;blockquote&gt;</code> و <code>&lt;q&gt;</code>، و <code>&lt;cite&gt;</code> و <code>&lt;abbr&gt;</code>. متى تستخدم كل منها مع أمثلة عملية؟</div>
+    <textarea id="exp2" rows="6" placeholder="اكتب إجابتك هنا..." style="font-family:'Cairo',sans-serif; direction:rtl; text-align:right;"></textarea>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SUBMIT -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="submit-area">
+    <h3>🎓 جاهز لتسليم الامتحان؟</h3>
+    <p>سيتم تصحيح أسئلة الاختيار من متعدد وصح/خطأ تلقائياً. تأكد من الإجابة على جميع الأسئلة.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-outline" onclick="checkAnswers()">📋 تحقق من الإجابات</button>
+      <button class="btn btn-primary" onclick="submitExam()">🚀 تسليم الامتحان</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- RESULT MODAL -->
+<div class="modal-overlay" id="resultModal">
+  <div class="modal">
+    <div class="score-circle">
+      <span class="score-big" id="scoreNum">0</span>
+      <span class="score-max">من 30</span>
+    </div>
+    <h2 id="resultTitle">النتيجة</h2>
+    <p id="resultMsg">وصف النتيجة</p>
+    <div class="result-breakdown" id="resultBreakdown"></div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal()">مراجعة الإجابات</button>
+      <button class="btn btn-green" onclick="resetExam()">🔄 إعادة الامتحان</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── MCQ ANSWERS ──
+const mcAnswers = {
+  mc1:'b', mc2:'c', mc3:'b', mc4:'c', mc5:'b',
+  mc6:'c', mc7:'c', mc8:'c', mc9:'b', mc10:'c',
+  mc11:'c', mc12:'b', mc13:'d', mc14:'a', mc15:'b',
+  mc16:'c', mc17:'a', mc18:'b', mc19:'c', mc20:'c'
+};
+
+// ── TRUE/FALSE DATA ──
+const tfData = [
+  { id:'tf1', text: 'وسم <code>&lt;img&gt;</code> يحتاج وسم إغلاق <code>&lt;/img&gt;</code>', answer: false },
+  { id:'tf2', text: '<code>&lt;h1&gt;</code> هو أصغر عنوان و <code>&lt;h6&gt;</code> هو أكبر عنوان', answer: false },
+  { id:'tf3', text: 'سمة <code>src</code> في <code>&lt;img&gt;</code> تُستخدم لتحديد مسار الصورة', answer: true },
+  { id:'tf4', text: '<code>&lt;br&gt;</code> يُستخدم لإنشاء فقرة جديدة', answer: false },
+  { id:'tf5', text: '<code>&lt;em&gt;</code> و <code>&lt;i&gt;</code> يظهران بنفس الشكل المائل لكن <code>&lt;em&gt;</code> يحمل دلالة تأكيد', answer: true },
+  { id:'tf6', text: '<code>&lt;mark&gt;</code> يُستخدم لتمييز النص بخلفية صفراء', answer: true },
+  { id:'tf7', text: '<code>&lt;abbr&gt;</code> يُستخدم لكتابة الاختصارات مع توضيح المعنى الكامل', answer: true },
+  { id:'tf8', text: 'التعليقات في HTML تظهر للمستخدم في صفحة الويب', answer: false },
+  { id:'tf9', text: '<code>&lt;address&gt;</code> يُستخدم لكتابة معلومات الاتصال أو عنوان المؤلف', answer: true },
+  { id:'tf10', text: '<code>&lt;bdo&gt;</code> يُستخدم لتغيير اتجاه النص (من اليمين لليسار أو العكس)', answer: true },
+];
+
+// Build TF questions
+const tfContainer = document.getElementById('tf-questions');
+tfData.forEach((q, idx) => {
+  tfContainer.innerHTML += `
+  <div class="q-card" id="qcard-${q.id}">
+    <div class="q-num">سؤال ${idx+1} / 10</div>
+    <div class="q-text">${q.text}</div>
+    <div class="tf-group">
+      <button class="tf-btn" id="${q.id}-true"  onclick="selectTF('${q.id}', true)">✅ صح</button>
+      <button class="tf-btn" id="${q.id}-false" onclick="selectTF('${q.id}', false)">❌ خطأ</button>
+    </div>
+    <div class="feedback" id="fb-${q.id}"></div>
+  </div>`;
+});
+
+const tfSelected = {};
+
+function selectTF(id, val) {
+  tfSelected[id] = val;
+  document.getElementById(id+'-true').className  = 'tf-btn' + (val === true  ? ' selected-true'  : '');
+  document.getElementById(id+'-false').className = 'tf-btn' + (val === false ? ' selected-false' : '');
+  document.getElementById('qcard-'+id).classList.add('answered');
+  updateProgress();
+}
+
+// ── PROGRESS ──
+const TOTAL = 35;
+function countAnswered() {
+  let n = 0;
+  Object.keys(mcAnswers).forEach(k => {
+    if (document.querySelector(`input[name="${k}"]:checked`)) n++;
+  });
+  n += Object.keys(tfSelected).length;
+  // count filled text areas (parts 3,4,5 as partial)
+  ['f1-1','f2-1','f3-1','f4-1','f5-1'].forEach(id => { if((document.getElementById(id)||{}).value?.trim()) n++; });
+  ['code1','code2','code3'].forEach(id => { if((document.getElementById(id)||{}).value?.trim()) n++; });
+  ['exp1','exp2'].forEach(id => { if((document.getElementById(id)||{}).value?.trim()) n++; });
+  return Math.min(n, TOTAL);
+}
+
+function updateProgress() {
+  const n = countAnswered();
+  document.getElementById('answeredCount').textContent = n;
+  document.getElementById('remainCount').textContent = Math.max(0, TOTAL - n);
+  document.getElementById('progressFill').style.width = (n/TOTAL*100) + '%';
+  document.getElementById('progressText').textContent = n + ' / ' + TOTAL;
+}
+
+// Listen to radio changes
+document.querySelectorAll('input[type=radio]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.getElementById('qcard-'+r.name).classList.add('answered');
+    updateProgress();
+  });
+});
+
+// Listen to textarea / short input
+document.querySelectorAll('textarea, .short-input').forEach(el => {
+  el.addEventListener('input', updateProgress);
+});
+
+// ── CHECK ANSWERS (MCQ + TF) ──
+function checkAnswers() {
+  let mcCorrect = 0, tfCorrect = 0;
+
+  // MCQ
+  Object.entries(mcAnswers).forEach(([name, correct]) => {
+    const selected = document.querySelector(`input[name="${name}"]:checked`);
+    const card = document.getElementById('qcard-'+name);
+    const fb   = document.getElementById('fb-'+name);
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+      r.parentElement.classList.remove('correct','wrong');
+      if (r.value === correct) r.parentElement.classList.add('correct');
+      if (selected && r.value === selected.value && selected.value !== correct)
+        r.parentElement.classList.add('wrong');
+    });
+    if (selected) {
+      if (selected.value === correct) {
+        mcCorrect++;
+        fb.className = 'feedback correct'; fb.textContent = '✅ إجابة صحيحة!';
+        card.classList.add('q-correct'); card.classList.remove('q-wrong');
+      } else {
+        fb.className = 'feedback wrong';
+        fb.textContent = '❌ إجابة خاطئة. الإجابة الصحيحة مُظللة باللون الأخضر.';
+        card.classList.add('q-wrong'); card.classList.remove('q-correct');
+      }
+    } else {
+      fb.className = 'feedback wrong'; fb.textContent = '⚠️ لم تُجب على هذا السؤال.';
+    }
+  });
+
+  // TF
+  tfData.forEach(q => {
+    const selected = tfSelected[q.id];
+    const card = document.getElementById('qcard-'+q.id);
+    const fb   = document.getElementById('fb-'+q.id);
+    const tBtn = document.getElementById(q.id+'-true');
+    const fBtn = document.getElementById(q.id+'-false');
+    tBtn.className = 'tf-btn'; fBtn.className = 'tf-btn';
+    if (q.answer === true)  tBtn.className += ' correct';
+    else                    fBtn.className += ' correct';
+
+    if (selected !== undefined) {
+      if (selected === q.answer) {
+        tfCorrect++;
+        fb.className = 'feedback correct'; fb.textContent = '✅ إجابة صحيحة!';
+        card.classList.add('q-correct'); card.classList.remove('q-wrong');
+      } else {
+        fb.className = 'feedback wrong';
+        fb.textContent = '❌ خطأ. الإجابة الصحيحة: ' + (q.answer ? 'صح ✅' : 'خطأ ❌');
+        card.classList.add('q-wrong'); card.classList.remove('q-correct');
+        if (selected === true)  tBtn.className += ' wrong';
+        else                    fBtn.className += ' wrong';
+      }
+    } else {
+      fb.className = 'feedback wrong'; fb.textContent = '⚠️ لم تُجب على هذا السؤال.';
+    }
+  });
+
+  return { mcCorrect, tfCorrect };
+}
+
+// ── SUBMIT ──
+function submitExam() {
+  const { mcCorrect, tfCorrect } = checkAnswers();
+  const total = mcCorrect + tfCorrect;
+  const pct = Math.round(total/30*100);
+
+  document.getElementById('scoreNum').textContent = total;
+  document.getElementById('resultBreakdown').innerHTML = `
+    <div class="rb-item"><div class="rb-label">الاختيار من متعدد</div><div class="rb-val" style="color:var(--accent)">${mcCorrect} / 20</div></div>
+    <div class="rb-item"><div class="rb-label">صح أو خطأ</div><div class="rb-val" style="color:var(--green)">${tfCorrect} / 10</div></div>
+    <div class="rb-item"><div class="rb-label">النسبة المئوية</div><div class="rb-val" style="color:var(--yellow)">${pct}%</div></div>
+    <div class="rb-item"><div class="rb-label">التقدير</div><div class="rb-val">${grade(pct)}</div></div>
+  `;
+
+  let title, msg;
+  if (pct >= 90)      { title='ممتاز! 🏆'; msg='أداء رائع! أنت تتقن HTML بشكل ممتاز.'; }
+  else if (pct >= 75) { title='جيد جداً! 🌟'; msg='أداء جيد جداً، مع بعض النقاط للمراجعة.'; }
+  else if (pct >= 60) { title='جيد 👍'; msg='أداء مقبول. راجع الأخطاء لتحسين فهمك.'; }
+  else                { title='بحاجة للمراجعة 📚'; msg='راجع المادة مرة أخرى، أنت قادر على التحسن!'; }
+
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('resultModal').classList.add('open');
+
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function grade(pct) {
+  if (pct >= 90) return '🅐 ممتاز';
+  if (pct >= 80) return '🅑 جيد جداً';
+  if (pct >= 70) return '🅒 جيد';
+  if (pct >= 60) return '🅓 مقبول';
+  return '🅔 ضعيف';
+}
+
+function closeModal() {
+  document.getElementById('resultModal').classList.remove('open');
+}
+
+function resetExam() {
+  if (!confirm('هل تريد إعادة الامتحان؟ سيتم مسح جميع إجاباتك.')) return;
+  location.reload();
+}
+</script>
+</body>
+</html>
